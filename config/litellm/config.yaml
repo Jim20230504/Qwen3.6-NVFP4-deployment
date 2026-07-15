@@ -1,0 +1,39 @@
+model_list:
+  - model_name: coder
+    litellm_params:
+      model: openai/qwen32b
+      api_base: http://vllm-qwen32b:8000/v1
+      api_key: none
+  - model_name: coder-fast
+    litellm_params:
+      model: openai/qwen14b
+      api_base: http://vllm-qwen14b:8000/v1
+      api_key: none
+  - model_name: deepseek-coder
+    litellm_params:
+      model: openai/deepseekcoder
+      api_base: http://vllm-deepseek:8000/v1
+      api_key: none
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+  store_prompts_in_spend_logs: false
+  disable_spend_logs: false
+  json_logs: true
+
+litellm_settings:
+  set_verbose: false
+  drop_params: true
+  enable_auto_tool_choice: true
+  tool_call_parser: "hermes"
+  default_key_generate_params:
+    models:
+      - coder-fast
+    rpm_limit: 30
+    tpm_limit: 120000
+    max_parallel_requests: 2
+  upperbound_key_generate_params:
+    rpm_limit: 120
+    tpm_limit: 500000
+    max_parallel_requests: 8
