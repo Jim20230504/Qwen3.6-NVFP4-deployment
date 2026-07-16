@@ -1,0 +1,5 @@
+FROM vllm/vllm-openai:v0.25.0
+
+RUN pip install --no-cache-dir \
+    "flashinfer-python>=0.6.13" \
+    "nvidia-cutlass-dsl>=4.5.2"

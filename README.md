@@ -23,7 +23,7 @@ data/models/
 ├─ qwen32b-awq/
 ├─ qwen14b/
 ├─ deepseek-v2-awq/
-└─ qwen36-35b-a3b/
+└─ unsloth-Qwen3.6-35B-NVFP4/
 ```
 
 ## 快速启动
@@ -106,7 +106,7 @@ python scripts/usage_report.py --days 7
 - Qwen 32B：`8192 / 2`
 - Qwen 14B：`8192 / 4`
 - DeepSeek：`8192 / 2`
-- Qwen3.6：`8192 / 2`
+- Qwen3.6 NVFP4：首次启动使用 `4096 / 1`；确认显存稳定后再提高
 
 ## 文档
 

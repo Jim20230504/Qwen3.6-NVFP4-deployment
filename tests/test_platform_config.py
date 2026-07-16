@@ -41,3 +41,23 @@ def test_vllm_env_files_exist_with_model_ids():
     assert "MODEL_ID=${QWEN14B_MODEL_ID}" in qwen14b
     assert "MODEL_ID=${DEEPSEEK_MODEL_ID}" in deepseek
     assert "MODEL_ID=${QWEN36_MODEL_ID}" in qwen36
+
+
+def test_qwen36_nvfp4_profile_uses_compatible_runtime_settings():
+    env_example = Path(".env.example").read_text(encoding="utf-8")
+    compose = yaml.safe_load(Path("docker-compose.yml").read_text(encoding="utf-8"))
+    qwen36 = compose["services"]["vllm-qwen36"]
+
+    assert "QWEN36_MODEL_ID=unsloth/Qwen3.6-35B-A3B-NVFP4" in env_example
+    assert "QWEN36_MODEL_PATH=/models/local/unsloth-Qwen3.6-35B-NVFP4" in env_example
+    assert qwen36["build"]["dockerfile"] == "Dockerfile.vllm-qwen36"
+    assert "--dtype" in qwen36["command"]
+    assert "bfloat16" in qwen36["command"]
+    assert qwen36["command"][qwen36["command"].index("--reasoning-parser") + 1] == "qwen3"
+    assert qwen36["command"][qwen36["command"].index("--tool-call-parser") + 1] == "qwen3_xml"
+
+
+def test_litellm_only_depends_on_postgres_not_inactive_model_profiles():
+    compose = yaml.safe_load(Path("docker-compose.yml").read_text(encoding="utf-8"))
+
+    assert set(compose["services"]["litellm"]["depends_on"]) == {"postgres"}
