@@ -11,6 +11,7 @@ def test_litellm_config_contains_expected_aliases():
     assert "coder" in model_names
     assert "coder-fast" in model_names
     assert "deepseek-coder" in model_names
+    assert "qwen36-coder" in model_names
 
 
 def test_compose_contains_required_services():
@@ -34,7 +35,9 @@ def test_vllm_env_files_exist_with_model_ids():
     qwen32b = Path("config/vllm/qwen32b.env").read_text(encoding="utf-8")
     qwen14b = Path("config/vllm/qwen14b.env").read_text(encoding="utf-8")
     deepseek = Path("config/vllm/deepseek.env").read_text(encoding="utf-8")
+    qwen36 = Path("config/vllm/qwen36.env").read_text(encoding="utf-8")
 
     assert "MODEL_ID=${QWEN32B_MODEL_ID}" in qwen32b
     assert "MODEL_ID=${QWEN14B_MODEL_ID}" in qwen14b
     assert "MODEL_ID=${DEEPSEEK_MODEL_ID}" in deepseek
+    assert "MODEL_ID=${QWEN36_MODEL_ID}" in qwen36

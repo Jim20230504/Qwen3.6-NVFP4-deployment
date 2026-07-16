@@ -58,6 +58,8 @@ services:
         condition: service_started
       vllm-deepseek:
         condition: service_started
+      vllm-qwen36:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/liveliness', timeout=5)\""]
       interval: 15s
@@ -207,6 +209,61 @@ services:
       - ${DEEPSEEK_MAX_NUM_SEQS}
       - --gpu-memory-utilization
       - ${DEEPSEEK_GPU_MEMORY_UTILIZATION}
+      - --trust-remote-code
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - hermes
+    ipc: host
+    volumes:
+      - ./data/huggingface:/models/huggingface
+      - ./data/models:/models/local
+      - ./data/logs:/var/log/ai-platform
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 40
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+    networks:
+      - ai-platform
+
+  vllm-qwen36:
+    image: vllm/vllm-openai:latest
+    container_name: ai-platform-vllm-qwen36
+    restart: unless-stopped
+    profiles: ["qwen36"]
+    env_file:
+      - .env
+      - ./config/vllm/qwen36.env
+    command:
+      - --served-model-name
+      - qwen36
+      - --tokenizer
+      - ${QWEN36_MODEL_PATH}
+      - --model
+      - ${QWEN36_MODEL_PATH}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --max-model-len
+      - ${QWEN36_MAX_MODEL_LEN}
+      - --max-num-seqs
+      - ${QWEN36_MAX_NUM_SEQS}
+      - --gpu-memory-utilization
+      - ${QWEN36_GPU_MEMORY_UTILIZATION}
       - --trust-remote-code
       - --enable-auto-tool-choice
       - --tool-call-parser

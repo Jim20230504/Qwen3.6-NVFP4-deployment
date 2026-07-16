@@ -5,38 +5,28 @@
 - OpenAI 兼容 API
 - LiteLLM 网关与虚拟 Key 管理
 - vLLM 本地推理
-- Qwen / DeepSeek 主模型切换
+- 严格单模型启动模式
+- Qwen / DeepSeek / Qwen3.6 模型切换
 - Adminer 数据库管理界面
-- 一键安装与启动脚本
 
-## 当前模型
+## 当前可切换模型
 
 - `coder`：Qwen 32B AWQ 主模型
 - `coder-fast`：Qwen 14B 快速模型
 - `deepseek-coder`：DeepSeek V2 AWQ 备选主模型
+- `qwen36-coder`：Qwen3.6-35B-A3B 备选主模型
 
-## 本地模型目录
-
-当前项目已经改成“本地模型目录优先”模式，推荐目录如下：
+## 推荐本地模型目录
 
 ```text
 data/models/
 ├─ qwen32b-awq/
 ├─ qwen14b/
-└─ deepseek-v2-awq/
+├─ deepseek-v2-awq/
+└─ qwen36-35b-a3b/
 ```
 
-目前我检查到你的模型目录已经存在，体积大致如下：
-
-- `qwen32b-awq`：约 `18.01 GB`
-- `qwen14b`：约 `27.52 GB`
-- `deepseek-v2-awq`：约 `8.47 GB`
-
-从目录和核心权重文件来看，三套模型看起来都是完整的。
-
-## 快速部署
-
-在 Ubuntu 24.04 新电脑上：
+## 快速启动
 
 ```bash
 cp .env.example .env
@@ -44,108 +34,79 @@ bash install.sh
 bash start.sh
 ```
 
-`start.sh` 会提示你选择：
+`start.sh` 启动时可选：
 
-- `1`：启动 `Qwen`
-- `2`：启动 `DeepSeek`
-- `3`：启动 `Qwen14B`
+- `1`：Qwen
+- `2`：DeepSeek
+- `3`：Qwen14B
+- `4`：Qwen3.6-35B-A3B
 
-也可以直接使用：
+也可以直接运行：
 
 ```bash
 bash start-qwen.sh
 bash start-deepseek.sh
 bash start-qwen14b.sh
+bash start-qwen36.sh
 ```
 
-## 部署后怎么用
+## 常用模型名
 
-### 1. 查看健康状态
+- `coder`
+- `coder-fast`
+- `deepseek-coder`
+- `qwen36-coder`
+
+## Key 管理
+
+创建支持全部模型的 Key：
 
 ```bash
-curl http://localhost:8080/health
-docker compose ps
+python scripts/create_api_key.py --name dev1 --owner alice --models coder-fast coder deepseek-coder qwen36-coder
 ```
 
-### 2. 创建管理 Key / 调用 Key
-
-创建一个可调用 `coder`、`coder-fast`、`deepseek-coder` 的 Key：
-
-```bash
-python scripts/create_api_key.py --name dev1 --owner alice --models coder-fast coder deepseek-coder
-```
-
-删除一个 Key：
+删除 Key：
 
 ```bash
 python scripts/revoke_api_key.py --key sk-...
 ```
 
-查看所有 Key：
+查看 Key：
 
 ```bash
 python scripts/list_api_keys.py
 ```
 
-查看近 7 天用量：
+查看用量：
 
 ```bash
 python scripts/usage_report.py --days 7
 ```
 
-### 3. 管理界面
+## 管理入口
 
 - LiteLLM UI：`http://localhost:8080/ui/`
 - Adminer：`http://localhost:8080/adminer/`
 
-### 4. OpenAI 兼容调用
+## 常用调参
 
-```bash
-curl http://localhost:8080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <API_KEY>" \
-  -d '{
-    "model": "coder-fast",
-    "messages": [
-      {"role": "user", "content": "请写一个 Python 读取 JSON 文件的函数"}
-    ],
-    "temperature": 0.2
-  }'
-```
-
-## 怎么调整上下文和并发
-
-主要改 `.env` 里的这些值：
+主要通过 `.env` 调整：
 
 - `QWEN32B_MAX_MODEL_LEN`
-- `QWEN32B_MAX_NUM_SEQS`
 - `QWEN14B_MAX_MODEL_LEN`
-- `QWEN14B_MAX_NUM_SEQS`
 - `DEEPSEEK_MAX_MODEL_LEN`
+- `QWEN36_MAX_MODEL_LEN`
+- `QWEN32B_MAX_NUM_SEQS`
+- `QWEN14B_MAX_NUM_SEQS`
 - `DEEPSEEK_MAX_NUM_SEQS`
-
-推荐理解方式：
-
-- `MAX_MODEL_LEN`：单次请求可用上下文上限
-- `MAX_NUM_SEQS`：同一时刻服务端允许的序列并发规模，越大越吃显存
+- `QWEN36_MAX_NUM_SEQS`
 
 推荐起步值：
 
-- Qwen 32B：`8192` / `2`
-- Qwen 14B：`8192` / `4`
-- DeepSeek：`8192` / `2`
-
-如果你遇到 OOM、重启、响应很慢，先优先降低：
-
-1. `MAX_NUM_SEQS`
-2. `MAX_MODEL_LEN`
-
-改完后重启：
-
-```bash
-bash stop.sh
-bash start.sh
-```
+- Qwen 32B：`8192 / 2`
+- Qwen 14B：`8192 / 4`
+- DeepSeek：`8192 / 2`
+- Qwen3.6：`8192 / 2`
 
 ## 文档
 

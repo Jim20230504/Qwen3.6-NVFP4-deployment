@@ -47,6 +47,7 @@ def test_core_shell_scripts_exist():
         "start-qwen.sh",
         "start-deepseek.sh",
         "start-qwen14b.sh",
+        "start-qwen36.sh",
         "scripts/check_env.sh",
         "scripts/install_docker_ubuntu.sh",
         "scripts/install_nvidia_container_toolkit.sh",
@@ -61,6 +62,8 @@ def test_start_script_prompts_for_qwen_and_deepseek_choices():
     assert "Qwen" in content
     assert "DeepSeek" in content
     assert "Qwen14B" in content
+    assert "Qwen3.6-35B-A3B" in content
     assert "start-qwen.sh" in content
     assert "start-deepseek.sh" in content
     assert "start-qwen14b.sh" in content
+    assert "start-qwen36.sh" in content

@@ -14,6 +14,11 @@ model_list:
       model: openai/deepseekcoder
       api_base: http://vllm-deepseek:8000/v1
       api_key: none
+  - model_name: qwen36-coder
+    litellm_params:
+      model: openai/qwen36
+      api_base: http://vllm-qwen36:8000/v1
+      api_key: none
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
