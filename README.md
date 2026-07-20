@@ -90,7 +90,7 @@ python scripts/revoke_api_key.py --key sk-...
 python scripts/list_api_keys.py
 ```
 
-查看用量：
+查看近 7 天用量汇总：
 
 ```bash
 python scripts/usage_report.py --days 7

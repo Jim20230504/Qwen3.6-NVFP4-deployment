@@ -43,11 +43,12 @@ def test_batch_key_creator_builds_numbered_names_and_owners():
         build_key_specs(0, "dev", "owner")
 
 
-def test_build_spend_report_path_uses_global_report_endpoint():
+def test_build_spend_report_path_uses_open_source_spend_logs_endpoint():
     path = build_spend_report_path(7, api_key="sk-demo-key", internal_user_id=None)
 
-    assert path.startswith("/global/spend/report?")
+    assert path.startswith("/spend/logs?")
     assert "api_key=sk-demo-key" in path
+    assert "summarize=true" in path
     assert "start_date=" in path
     assert "end_date=" in path
 

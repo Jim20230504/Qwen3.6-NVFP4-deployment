@@ -27,8 +27,9 @@ def build_spend_report_path(days: int, api_key: str | None, internal_user_id: st
     if api_key:
         params["api_key"] = api_key
     if internal_user_id:
-        params["internal_user_id"] = internal_user_id
-    return f"/global/spend/report?{urllib.parse.urlencode(params)}"
+        params["user_id"] = internal_user_id
+    params["summarize"] = "true"
+    return f"/spend/logs?{urllib.parse.urlencode(params)}"
 
 
 def get_json(path: str) -> object:
@@ -42,7 +43,7 @@ def get_json(path: str) -> object:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Print LiteLLM spend report.")
+    parser = argparse.ArgumentParser(description="Print LiteLLM spend logs summary.")
     parser.add_argument("--days", type=int, default=7)
     parser.add_argument("--api-key")
     parser.add_argument("--internal-user-id")
