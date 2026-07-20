@@ -65,6 +65,18 @@ bash start-qwen36.sh
 python scripts/create_api_key.py --name dev1 --owner alice --models coder-fast coder deepseek-coder qwen36-coder
 ```
 
+批量创建 5 个支持全部模型的 Key：
+
+```bash
+python scripts/create_api_keys.py
+```
+
+可按需要指定数量、名称前缀和模型权限：
+
+```bash
+python scripts/create_api_keys.py --count 5 --name-prefix qwen36-dev --owner-prefix qwen36-dev --models qwen36-coder
+```
+
 删除 Key：
 
 ```bash

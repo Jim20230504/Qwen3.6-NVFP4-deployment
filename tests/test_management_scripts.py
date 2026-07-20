@@ -1,6 +1,9 @@
 from pathlib import Path
 
+import pytest
+
 from scripts.create_api_key import build_key_generate_payload
+from scripts.create_api_keys import build_key_specs
 from scripts.revoke_api_key import build_delete_payload
 from scripts.usage_report import build_spend_report_path
 
@@ -27,6 +30,17 @@ def test_build_delete_payload_targets_expected_key():
     payload = build_delete_payload("sk-demo-key")
 
     assert payload == {"key": "sk-demo-key"}
+
+
+def test_batch_key_creator_builds_numbered_names_and_owners():
+    assert build_key_specs(3, "dev", "owner") == [
+        ("dev1", "owner1"),
+        ("dev2", "owner2"),
+        ("dev3", "owner3"),
+    ]
+
+    with pytest.raises(ValueError, match="at least 1"):
+        build_key_specs(0, "dev", "owner")
 
 
 def test_build_spend_report_path_uses_global_report_endpoint():
