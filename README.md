@@ -96,6 +96,15 @@ python scripts/list_api_keys.py
 python scripts/usage_report.py --days 7
 ```
 
+按 Key 汇总近 7 天输入、输出和总 token：
+
+```bash
+python scripts/usage_report.py \
+  --days 7 \
+  --api-key 'sk-你的完整key' \
+  --tokens
+```
+
 ## 管理入口
 
 - LiteLLM UI：`http://localhost:8080/ui/`

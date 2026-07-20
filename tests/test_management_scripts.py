@@ -5,6 +5,7 @@ import pytest
 from scripts.create_api_key import build_key_generate_payload
 from scripts.create_api_keys import build_key_specs
 from scripts.revoke_api_key import build_delete_payload
+from scripts import usage_report
 from scripts.usage_report import build_spend_report_path
 
 
@@ -51,6 +52,40 @@ def test_build_spend_report_path_uses_open_source_spend_logs_endpoint():
     assert "summarize=true" in path
     assert "start_date=" in path
     assert "end_date=" in path
+
+
+def test_summarize_token_usage_totals_requests_and_models():
+    summary = usage_report.summarize_token_usage(
+        [
+            {
+                "model": "openai/qwen36",
+                "prompt_tokens": 100,
+                "completion_tokens": 20,
+                "total_tokens": 120,
+            },
+            {
+                "model": "openai/qwen36",
+                "prompt_tokens": 50,
+                "completion_tokens": 10,
+                "total_tokens": 60,
+            },
+        ]
+    )
+
+    assert summary == {
+        "requests": 2,
+        "prompt_tokens": 150,
+        "completion_tokens": 30,
+        "total_tokens": 180,
+        "models": {
+            "openai/qwen36": {
+                "requests": 2,
+                "prompt_tokens": 150,
+                "completion_tokens": 30,
+                "total_tokens": 180,
+            }
+        },
+    }
 
 
 def test_core_shell_scripts_exist():
