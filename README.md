@@ -68,6 +68,7 @@ python scripts/create_api_key.py --name dev1 --owner alice --models coder-fast c
 批量创建 5 个支持全部模型的 Key：
 
 ```bash
+set -a && source .env && set +a
 python scripts/create_api_keys.py
 ```
 
